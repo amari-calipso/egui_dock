@@ -959,21 +959,34 @@ impl<Tab> DockArea<'_, Tab> {
         fade: Option<&Style>,
     ) -> (Response, Option<Response>) {
         let style = fade.unwrap_or_else(|| self.style.as_ref().unwrap());
-        let galley = label.into_galley(ui, None, f32::INFINITY, TextStyle::Button);
-        let x_spacing = 8.0;
-        let text_width = galley.size().x + 2.0 * x_spacing;
+
         let close_button_size = if show_close_button {
             Style::TAB_CLOSE_BUTTON_SIZE.min(style.tab_bar.height)
         } else {
             0.0
         };
 
+        let x_spacing = 8.0;
+        let galley = label.into_galley(
+            ui, 
+            Some(egui::TextWrapMode::Truncate), 
+            tab_style.maximum_width.map(|x| x - close_button_size - x_spacing)
+                .unwrap_or(f32::INFINITY), 
+            TextStyle::Button
+        );
+
+        let text_width = galley.size().x + 2.0 * x_spacing;
+        
         // Compute total width of the tab bar.
         let minimum_width = tab_style
             .minimum_width
             .unwrap_or(0.0)
             .at_least(text_width + close_button_size);
-        let tab_width = preferred_width.unwrap_or(0.0).at_least(minimum_width);
+        let mut tab_width = preferred_width.unwrap_or(0.0).at_least(minimum_width);
+
+        if let Some(max_width) = tab_style.maximum_width {
+            tab_width = tab_width.at_most(max_width);
+        }
 
         let (_, tab_rect) = ui.allocate_space(vec2(tab_width, ui.available_height()));
         let mut response = ui.interact(tab_rect, id, Sense::click_and_drag());

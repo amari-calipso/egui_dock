@@ -224,6 +224,11 @@ pub struct TabStyle {
     /// The tab title or [`TabBarStyle::fill_tab_bar`] may make the tab
     /// wider than this but never shorter.
     pub minimum_width: Option<f32>,
+    /// The maximum width of the tab.
+    ///
+    /// [`TabBarStyle::fill_tab_bar`] may make the tab wider than this.
+    /// If the tab title is wider than this, it will be trimmed
+    pub maximum_width: Option<f32>,
 }
 
 /// Specifies the look and feel of individual tabs while they are being interacted with.
@@ -453,6 +458,7 @@ impl Default for TabStyle {
             tab_body: TabBodyStyle::default(),
             hline_below_active_tab_name: false,
             minimum_width: None,
+            maximum_width: None,
         }
     }
 }
