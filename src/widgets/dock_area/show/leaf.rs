@@ -970,7 +970,7 @@ impl<Tab> DockArea<'_, Tab> {
         let galley = label.into_galley(
             ui, 
             Some(egui::TextWrapMode::Truncate), 
-            tab_style.maximum_width.map(|x| x - close_button_size - x_spacing)
+            tab_style.maximum_width.map(|x| x - close_button_size - 2.0 * x_spacing)
                 .unwrap_or(f32::INFINITY), 
             TextStyle::Button
         );
